@@ -17,6 +17,7 @@ const server = z.object({
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   NEXT_PUBLIC_CONTRACT_ADDRESS: z.string(),
+  NEXT_PUBLIC_ALCHEMY_API_KEY: z.string(),
 });
 
 /**
@@ -30,6 +31,7 @@ const processEnv = {
   PRIVATE_KEY: process.env.PRIVATE_KEY,
   RPC_URL: process.env.RPC_URL,
   NEXT_PUBLIC_CONTRACT_ADDRESS: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+  NEXT_PUBLIC_ALCHEMY_API_KEY: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
