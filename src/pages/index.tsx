@@ -41,7 +41,7 @@ const App = () => {
           />
         </div>
 
-        <Button disabled={!domain || !addresses} onClick={() => setDomainOwner.mutate({ domain, owner: address, addresses })}>Register</Button>
+        <Button disabled={!domain || !addresses} onClick={() => setDomainOwner.mutate({ domain, owner: address as string, addresses })}>Register</Button>
       </div>
     </div>
   )

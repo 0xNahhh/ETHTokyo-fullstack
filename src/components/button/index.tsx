@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 type ButtonProps = { 
   children: ReactNode;
   onClick: () => void;
-  disabled: boolean;
+  disabled?: boolean;
 };
 const Button = ({ children, onClick, disabled }: ButtonProps) => (
   <button
