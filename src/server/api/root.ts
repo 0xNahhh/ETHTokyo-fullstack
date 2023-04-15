@@ -28,15 +28,15 @@ export const appRouter = createTRPCRouter({
         // set domain owner
         const domainBytes = ethers.utils.formatBytes32String(domain)
         const domainoor = new ethers.Contract(env.NEXT_PUBLIC_CONTRACT_ADDRESS, domainoorAbi, signer)
-        const setDomainOwnerSelfTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
-        await setDomainOwnerSelfTx.wait()
-        console.log("domain owner set to self")
+        // const setDomainOwnerSelfTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
+        // await setDomainOwnerSelfTx.wait()
+        // console.log("domain owner set to self")
 
-        // // set trusted contracts
-        // const contracts = addresses.split(',')
-        // const setTrustedContractsTx = await domainoor.setTrustedContracts(domainBytes, contracts)
-        // await setTrustedContractsTx.wait()
-        // console.log("trusted contracts set")
+        // set trusted contracts
+        const contracts = addresses.split(',')
+        const setTrustedContractsTx = await domainoor.setTrustedContracts(domainBytes, contracts)
+        await setTrustedContractsTx.wait()
+        console.log("trusted contracts set")
 
         // // set domain owner
         // const setDomainOwnerTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
