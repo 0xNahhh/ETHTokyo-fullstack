@@ -32,16 +32,16 @@ export const appRouter = createTRPCRouter({
         await setDomainOwnerSelfTx.wait()
         console.log("domain owner set to self")
 
-        // set trusted contracts
-        const contracts = addresses.split(',')
-        const setTrustedContractsTx = await domainoor.setTrustedContracts(domainBytes, contracts)
-        await setTrustedContractsTx.wait()
-        console.log("trusted contracts set")
+        // // set trusted contracts
+        // const contracts = addresses.split(',')
+        // const setTrustedContractsTx = await domainoor.setTrustedContracts(domainBytes, contracts)
+        // await setTrustedContractsTx.wait()
+        // console.log("trusted contracts set")
 
-        // set domain owner
-        const setDomainOwnerTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
-        await setDomainOwnerTx.wait()
-        console.log("domain owner set")
+        // // set domain owner
+        // const setDomainOwnerTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
+        // await setDomainOwnerTx.wait()
+        // console.log("domain owner set")
       } catch (error) {
         console.error("errors: ", error)
         throw new TRPCError({
