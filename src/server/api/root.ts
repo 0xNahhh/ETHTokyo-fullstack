@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import domainoorAbi from '~/abi/domainoor.json'
+import { TRPCError } from "@trpc/server";
 
 /**
  * This is the primary router for your server.
@@ -17,29 +18,37 @@ export const appRouter = createTRPCRouter({
       addresses: z.string(),
     }))
     .mutation(async ({ input, ctx }) => {
-      // fetch signer
-      const { domain, owner, addresses } = input
-      const provider = new ethers.providers.JsonRpcProvider(env.RPC_URL)
-      const signer = new ethers.Wallet(env.PRIVATE_KEY, provider)
-      const signerAddress = await signer.getAddress()
+      try {
+        // fetch signer
+        const { domain, owner, addresses } = input
+        const provider = new ethers.providers.JsonRpcProvider(env.RPC_URL)
+        const signer = new ethers.Wallet(env.PRIVATE_KEY, provider)
+        const signerAddress = await signer.getAddress()
 
-      // set domain owner
-      const domainBytes = ethers.utils.formatBytes32String(domain)
-      const domainoor = new ethers.Contract(env.NEXT_PUBLIC_CONTRACT_ADDRESS, domainoorAbi, signer)
-      const setDomainOwnerSelfTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
-      await setDomainOwnerSelfTx.wait()
-      console.log("domain owner set to self")
+        // set domain owner
+        const domainBytes = ethers.utils.formatBytes32String(domain)
+        const domainoor = new ethers.Contract(env.NEXT_PUBLIC_CONTRACT_ADDRESS, domainoorAbi, signer)
+        const setDomainOwnerSelfTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
+        await setDomainOwnerSelfTx.wait()
+        console.log("domain owner set to self")
 
-      // set trusted contracts
-      const contracts = addresses.split(',')
-      const setTrustedContractsTx = await domainoor.setTrustedContracts(domainBytes, contracts)
-      await setTrustedContractsTx.wait()
-      console.log("trusted contracts set")
+        // set trusted contracts
+        const contracts = addresses.split(',')
+        const setTrustedContractsTx = await domainoor.setTrustedContracts(domainBytes, contracts)
+        await setTrustedContractsTx.wait()
+        console.log("trusted contracts set")
 
-      // set domain owner
-      const setDomainOwnerTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
-      await setDomainOwnerTx.wait()
-      console.log("domain owner set")
+        // set domain owner
+        const setDomainOwnerTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
+        await setDomainOwnerTx.wait()
+        console.log("domain owner set")
+      } catch (error) {
+        console.error("errors: ", error)
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong',
+        })
+      }
     }),
 
     setDomainOwner: publicProcedure
