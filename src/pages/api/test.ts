@@ -9,9 +9,11 @@ const TestEndpoint = async (
   const context = createTRPCContext({ req, res });
   const caller = appRouter.createCaller(context);
 
-  const data = await caller.setDomainOwner({
-    domain: 'asd.com',
-    owner: '0x15e59698A92F844f24ce2AFe8F0b494CeBc836f3',
+  const { domain, to } = req.query
+
+  const data = await caller.checkContract({
+    domain: domain as string,
+    to: to as string,
   });
 
   res.status(200).json(data);
