@@ -1,14 +1,15 @@
 import type { ReactNode } from "react";
 
 type ButtonProps = { 
+  className?: string;
   children: ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
 };
-const Button = ({ children, onClick, disabled }: ButtonProps) => (
+const Button = ({ className, children, onClick, disabled }: ButtonProps) => (
   <button
     onClick={onClick}
-    className='bg-sky-800 text-medium rounded-lg px-4 py-2 disabled:opacity-30'
+    className={`bg-sky-800 text-medium rounded-lg px-4 py-2 disabled:opacity-30 ${className}`}
     disabled={disabled}
   >
     {children}   

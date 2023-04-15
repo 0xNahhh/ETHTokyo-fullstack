@@ -10,7 +10,7 @@ import domainoorAbi from '~/abi/domainoor.json'
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  setDomainOwner: publicProcedure
+  setDomainOwnerAndAddresses: publicProcedure
     .input(z.object({
       domain: z.string(),
       owner: z.string(),
@@ -21,20 +21,71 @@ export const appRouter = createTRPCRouter({
       const { domain, owner, addresses } = input
       const provider = new ethers.providers.JsonRpcProvider(env.RPC_URL)
       const signer = new ethers.Wallet(env.PRIVATE_KEY, provider)
+      const signerAddress = await signer.getAddress()
 
       // set domain owner
       const domainBytes = ethers.utils.formatBytes32String(domain)
       const domainoor = new ethers.Contract(env.NEXT_PUBLIC_CONTRACT_ADDRESS, domainoorAbi, signer)
-      const setDomainOwnerTx = await domainoor.setDomainOwner(domainBytes, owner)
-      await setDomainOwnerTx.wait()
-      console.log("domain owner set")
+      const setDomainOwnerSelfTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
+      await setDomainOwnerSelfTx.wait()
+      console.log("domain owner set to self")
 
       // set trusted contracts
       const contracts = addresses.split(',')
       const setTrustedContractsTx = await domainoor.setTrustedContracts(domainBytes, contracts)
       await setTrustedContractsTx.wait()
       console.log("trusted contracts set")
+
+      // set domain owner
+      const setDomainOwnerTx = await domainoor.setDomainOwner(domainBytes, signerAddress)
+      await setDomainOwnerTx.wait()
+      console.log("domain owner set")
     }),
+
+    setDomainOwner: publicProcedure
+      .input(z.object({
+        domain: z.string(),
+        owner: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // fetch signer
+        const { domain, owner } = input
+        const provider = new ethers.providers.JsonRpcProvider(env.RPC_URL)
+        const signer = new ethers.Wallet(env.PRIVATE_KEY, provider)
+
+        // set domain owner
+        const domainBytes = ethers.utils.formatBytes32String(domain)
+        const domainoor = new ethers.Contract(env.NEXT_PUBLIC_CONTRACT_ADDRESS, domainoorAbi, signer)
+        const setDomainOwnerTx = await domainoor.setDomainOwner(domainBytes, owner)
+        await setDomainOwnerTx.wait()
+        console.log("set domain owner")
+
+        return true
+      }),
+
+    setTrustedContracts: publicProcedure
+      .input(z.object({
+        domain: z.string(),
+        addresses: z.string(),
+      }))
+      .query(async ({ input, ctx }) => {
+        // fetch signer
+        const { domain, addresses } = input
+        const provider = new ethers.providers.JsonRpcProvider(env.RPC_URL)
+        const signer = new ethers.Wallet(env.PRIVATE_KEY, provider)
+
+        // set trusted contracts
+        const domainBytes = ethers.utils.formatBytes32String(domain)
+        const domainoor = new ethers.Contract(env.NEXT_PUBLIC_CONTRACT_ADDRESS, domainoorAbi, signer)
+        const contracts = addresses.split(',')
+        console.log("contracts: ", contracts)
+        const setTrustedContractsTx = await domainoor.setTrustedContracts(domainBytes, contracts)
+        await setTrustedContractsTx.wait()
+        console.log("trusted contracts set")
+
+        return true
+    }),
+    
 
     getDomainOwner: publicProcedure
       .input(z.object({ domain: z.string() }))
