@@ -10,11 +10,11 @@ import {
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { foundry } from 'wagmi/chains';
+import { foundry, polygonMumbai } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
 const { chains, provider } = configureChains(
-  [foundry],
+  [foundry, polygonMumbai],
   [publicProvider()],
 );
 const { connectors } = getDefaultWallets({

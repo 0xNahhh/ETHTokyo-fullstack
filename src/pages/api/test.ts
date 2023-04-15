@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { appRouter } from '~/server/api/root';
 import {  createTRPCContext } from '~/server/api/trpc'
-import { ethers } from 'ethers'
 
 const TestEndpoint = async (
   req: NextApiRequest,
